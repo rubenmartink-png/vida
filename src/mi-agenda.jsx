@@ -618,6 +618,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState("resumen");
   const [darkMode, setDarkMode] = useState(false);
+  useEffect(() => {
+    const bg = darkMode ? "#14151C" : "#F6F5FB";
+    document.documentElement.style.background = bg;
+    document.body.style.background = bg;
+  }, [darkMode]);
 
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
@@ -4852,6 +4857,8 @@ function Styles() {
         --acc-routine: #0EA5E9; --acc-routine-soft: #E0F2FE;
 
         display: flex;
+        height: 100vh;
+        height: 100dvh;
         min-height: 560px;
         width: 100%;
         background: var(--bg);
@@ -5297,7 +5304,9 @@ function Styles() {
       .curio-time { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
 
       @media (max-width: 680px) {
-        .wrap { flex-direction: column; }
+        .wrap { flex-direction: column; min-height: 0; }
+        .nav { flex-shrink: 0; scrollbar-width: none; }
+        .nav::-webkit-scrollbar { display: none; }
         .nav { width: 100%; flex-direction: row; align-items: center; padding: 10px 12px; overflow-x: auto; gap: 10px; }
         .nav-brand { display: flex; padding: 0; flex-shrink: 0; }
         .nav-brand-label { display: none; }
@@ -5305,7 +5314,9 @@ function Styles() {
         .save-all-label { display: none; }
         .save-all-msg { display: none; }
         .nav-list { flex-direction: row; gap: 4px; }
-        .nav-item { flex-direction: column; gap: 3px; padding: 8px 12px; white-space: nowrap; }
+        .nav-item { flex-direction: column; gap: 3px; white-space: nowrap; }
+        .nav-item-main { flex-direction: column; align-items: center; gap: 3px; padding: 8px 12px; }
+        .nav-item-dots, .nav-reorder-menu { display: none; }
         .nav-label { font-size: 10.5px; }
         .content { padding: 20px 16px 40px; }
         .grid-2 { grid-template-columns: 1fr; }
