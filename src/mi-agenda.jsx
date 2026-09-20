@@ -29,12 +29,10 @@ const fmtBackupTime = (isoTs) => {
   const date = new Date(isoTs);
   return date.toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 };
-const USER_NAME = "Ruben";
-const greeting = () => {
+const greeting = (name) => {
   const h = new Date().getHours();
-  if (h < 12) return `Buenos días, ${USER_NAME}`;
-  if (h < 20) return `Buenas tardes, ${USER_NAME}`;
-  return `Buenas noches, ${USER_NAME}`;
+  const base = h < 12 ? "Buenos días" : h < 20 ? "Buenas tardes" : "Buenas noches";
+  return name ? `${base}, ${name}` : base;
 };
 const MOTIVATIONAL_QUOTES = [
   "Un lunes más para construir la semana que quieres tener.",
@@ -507,72 +505,17 @@ const BUDGET_CAT_COLORS = {
   "Otros": "var(--ink-soft)",
 };
 
-// ---------- catálogo de rutina diaria ----------
-const ROUTINE_SECTIONS = [
-  {
-    id: "manana", label: "Mañana", icon: Sunrise, accent: "var(--acc-goals)", soft: "var(--acc-goals-soft)",
-    items: [
-      {
-        id: "movilidad", name: "Movilidad articular y estiramientos", type: "Ejercicio", freq: "Diario",
-        details: [
-          {
-            id: "klapp",
-            name: "Gimnasia de Klapp — 20 repeticiones",
-            explanation: "Gateo terapéutico apoyando manos y rodillas, avanzando de forma cruzada (brazo derecho con rodilla izquierda y viceversa) con la espalda recta. Fortalece la musculatura paravertebral y descarga la columna.",
-          },
-          {
-            id: "bascula",
-            name: "Báscula pélvica (retroversión/anteversión) — 15 repeticiones",
-            explanation: "Tumbado boca arriba con las rodillas flexionadas, contrae el abdomen y bascula la pelvis hacia atrás (retroversión) y luego relaja hacia delante (anteversión). Mejora el control lumbo-pélvico y ayuda a corregir la postura.",
-          },
-          {
-            id: "flexores-cadera",
-            name: "Estiramiento de flexores de cadera — 2 series x 30 seg por lado",
-            explanation: "En posición de zancada, con la rodilla trasera apoyada en el suelo, empuja la cadera hacia delante manteniendo el tronco recto. Estira el psoas-ilíaco, muy útil si pasas muchas horas sentado.",
-          },
-          {
-            id: "isquios",
-            name: "Estiramiento de isquiotibiales — 2 series x 30 seg por pierna",
-            explanation: "Sentado o tumbado, con la pierna extendida, inclina el tronco hacia el pie manteniendo la espalda recta (sin redondear). Mejora la movilidad de cadera y reduce la tensión en la zona lumbar.",
-          },
-          {
-            id: "toracica",
-            name: "Movilidad torácica (corrección postural) — 10 repeticiones por lado",
-            explanation: "En cuadrupedia o sentado, con una mano en la nuca, gira la parte alta de la espalda llevando el codo hacia arriba y atrás. Mejora la rotación torácica y quita carga a cervicales y lumbares.",
-          },
-        ],
-      },
-      { id: "hipopresivos", name: "Respiración hipopresiva (5 min)", type: "Ejercicio", freq: "Diario" },
-      { id: "gr7", name: "GR7", type: "Suplemento", freq: "3x semana" },
-      { id: "minoxidil", name: "Minoxidil tópico", type: "Tópico", freq: "Diario" },
-      { id: "limpiador-am", name: "Limpiador facial", type: "Cosmética", freq: "Diario" },
-      { id: "vitc", name: "Vitamina C tópica", type: "Cosmética", freq: "Diario" },
-      { id: "hidratante-am", name: "Crema hidratante", type: "Cosmética", freq: "Diario" },
-      { id: "spf", name: "Protección solar", type: "Cosmética", freq: "Diario" },
-      { id: "espermidina", name: "Espermidina (1 comprimido)", type: "Suplemento", freq: "Diario" },
-      { id: "finasteride", name: "Finasteride", type: "Suplemento", freq: "Diario" },
-      { id: "creatina", name: "Creatina", type: "Suplemento", freq: "Diario" },
-    ],
-  },
-  {
-    id: "tarde", label: "Tarde", icon: CloudSun, accent: "var(--acc-cardio)", soft: "var(--acc-cardio-soft)",
-    items: [
-      { id: "nac", name: "NAC (1 comprimido)", type: "Suplemento", freq: "Diario" },
-      { id: "omega3", name: "Omega 3 (1 comprimido, después de cenar)", type: "Suplemento", freq: "Diario" },
-    ],
-  },
-  {
-    id: "noche", label: "Noche", icon: Moon, accent: "var(--acc-projects)", soft: "var(--acc-projects-soft)",
-    items: [
-      { id: "magnesio", name: "Magnesio (2 comprimidos)", type: "Suplemento", freq: "Diario" },
-      { id: "limpiador-pm", name: "Limpiador facial", type: "Cosmética", freq: "Diario" },
-      { id: "niacinamida", name: "Niacinamida tópica", type: "Cosmética", freq: "Diario" },
-      { id: "retinol", name: "Retinol", type: "Cosmética", freq: "2x semana" },
-      { id: "hidratante-pm", name: "Crema hidratante", type: "Cosmética", freq: "Diario" },
-    ],
-  },
+// ---------- rutina diaria ----------
+// Solo la estructura (franjas del día); los hábitos de cada franja los define cada usuario
+// y se guardan en routine.items[<id de franja>].
+const ROUTINE_SECTION_DEFS = [
+  { id: "manana", label: "Mañana", icon: Sunrise, accent: "var(--acc-goals)", soft: "var(--acc-goals-soft)" },
+  { id: "tarde", label: "Tarde", icon: CloudSun, accent: "var(--acc-cardio)", soft: "var(--acc-cardio-soft)" },
+  { id: "noche", label: "Noche", icon: Moon, accent: "var(--acc-projects)", soft: "var(--acc-projects-soft)" },
 ];
-const ROUTINE_ITEM_COUNT = ROUTINE_SECTIONS.reduce((a, s) => a + s.items.length, 0);
+const ROUTINE_TYPES = ["Ejercicio", "Suplemento", "Tópico", "Cosmética", "Otro"];
+const ROUTINE_FREQS = ["Diario", "3x semana", "2x semana", "Semanal"];
+const getRoutineSections = (routine) => ROUTINE_SECTION_DEFS.map((def) => ({ ...def, items: ((routine && routine.items) || {})[def.id] || [] }));
 const ROUTINE_TYPE_ICON = { Ejercicio: PersonStanding, Suplemento: Pill, Tópico: Droplet, Cosmética: Sparkles };
 const STEPS_GOAL_DAILY = 8000;
 const STEPS_GOAL_WEEKLY = 56000;
@@ -614,7 +557,7 @@ const TABS = [
   { id: "horoscopo", label: "Horóscopo", icon: Sparkles, accent: "var(--acc-aesthetic)", soft: "var(--acc-aesthetic-soft)" },
 ];
 
-export default function App() {
+export default function App({ userName = "" }) {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState("resumen");
   const [darkMode, setDarkMode] = useState(false);
@@ -1090,7 +1033,7 @@ export default function App() {
         {loading ? (
           <div className="loading"><Loader2 className="spin" size={20} /> Cargando tu app…</div>
         ) : active === "resumen" ? (
-          <Resumen tasks={tasks} savings={savings} gym={gym} goals={goals} events={events} hobbies={hobbies} expenses={expenses} routine={routine} goTo={setActive} />
+          <Resumen tasks={tasks} savings={savings} gym={gym} goals={goals} events={events} hobbies={hobbies} expenses={expenses} routine={routine} goTo={setActive} userName={userName} />
         ) : active === "dia" ? (
           <DiaADia tasks={tasks} setTasks={persist.tasks} events={events} setEvents={persist.events} gym={gym} onDeleteSession={deleteLinked} onRemoveTask={removeTaskGeneric} />
         ) : active === "calendario" ? (
@@ -1287,7 +1230,7 @@ function DatePicker({ value, onChange, accent = "var(--acc-gym)", label }) {
 }
 
 // ---------- Resumen ----------
-function Resumen({ tasks, savings, gym, goals, events, hobbies, expenses, routine, goTo }) {
+function Resumen({ tasks, savings, gym, goals, events, hobbies, expenses, routine, goTo, userName }) {
   const [hidden, setHidden] = useState(true);
   const todayTasks = tasks.filter((t) => t.date === todayStr());
   const doneToday = todayTasks.filter((t) => t.done).length;
@@ -1329,8 +1272,8 @@ function Resumen({ tasks, savings, gym, goals, events, hobbies, expenses, routin
   const cashFlowMonth = (fixedActiveInc + varIncMonth) - (fixedActiveExp + varExpMonth) - (fixedAhorroMonth + varAhorroMonth);
 
   const routineChecklist = (routine.checklist || {})[todayStr()] || {};
-  const routineAllItems = ROUTINE_SECTIONS.flatMap((s) => s.items);
-  const isRoutineItemDone = (item, data) => (item.details ? item.details.every((d) => data[`${item.id}__${d.id}`]) : !!data[item.id]);
+  const routineAllItems = getRoutineSections(routine).flatMap((s) => s.items);
+  const isRoutineItemDone = (item, data) => !!data[item.id];
   const routineDoneToday = routineAllItems.filter((it) => isRoutineItemDone(it, routineChecklist)).length;
   const routineDailyItems = routineAllItems.filter((it) => it.freq === "Diario");
   const routineStreak = (() => {
@@ -1346,7 +1289,7 @@ function Resumen({ tasks, savings, gym, goals, events, hobbies, expenses, routin
   })();
 
   return (
-    <Page title={`${greeting()} 👋`} subtitle={new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}>
+    <Page title={`${greeting(userName)} 👋`} subtitle={new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}>
       <p className="motivational-quote">{motivationalQuote()}</p>
       <div className="grid-2">
         <Card className="hero-card" style={{ background: "var(--primary)" }}>
@@ -1392,7 +1335,7 @@ function Resumen({ tasks, savings, gym, goals, events, hobbies, expenses, routin
           <div className="stat-top">
             <span className="stat-icon" style={{ background: "var(--acc-routine-soft)", color: "var(--acc-routine)" }}><ListChecks size={16} /></span>
           </div>
-          <div className="stat-value">{routineDoneToday}<span className="hero-value-sub">/{ROUTINE_ITEM_COUNT}</span></div>
+          <div className="stat-value">{routineDoneToday}<span className="hero-value-sub">/{routineAllItems.length}</span></div>
           <div className="stat-label">rutina de hoy{routineStreak > 0 ? ` · 🔥 ${routineStreak} día${routineStreak > 1 ? "s" : ""}` : ""}</div>
           <button className="stat-cta" onClick={() => goTo("rutina")}>Ver rutina</button>
         </Card>
@@ -4656,37 +4599,35 @@ function Gastos({ expenses, setExpenses, savings, setSavings }) {
 // ---------- Rutina diaria ----------
 function RutinaDiaria({ routine, setRoutine }) {
   const [filterDate, setFilterDate] = useState(todayStr());
-  const [expandedDetail, setExpandedDetail] = useState(null);
+  const [drafts, setDrafts] = useState({});
   const checklist = routine.checklist || {};
   const steps = routine.steps || {};
   const dayData = checklist[filterDate] || {};
+  const sections = getRoutineSections(routine);
+  const allItems = sections.flatMap((s) => s.items);
 
-  const subKey = (itemId, detailId) => `${itemId}__${detailId}`;
-  const isItemComplete = (item, data) => (
-    item.details ? item.details.every((d) => data[subKey(item.id, d.id)]) : !!data[item.id]
-  );
   const toggleItem = (id) => setRoutine({ ...routine, checklist: { ...checklist, [filterDate]: { ...dayData, [id]: !dayData[id] } } });
-  const toggleParent = (item) => {
-    const full = isItemComplete(item, dayData);
-    const next = { ...dayData };
-    item.details.forEach((d) => { next[subKey(item.id, d.id)] = !full; });
-    setRoutine({ ...routine, checklist: { ...checklist, [filterDate]: next } });
-  };
-  const toggleSub = (item, detail) => {
-    const key = subKey(item.id, detail.id);
-    setRoutine({ ...routine, checklist: { ...checklist, [filterDate]: { ...dayData, [key]: !dayData[key] } } });
-  };
   const updateSteps = (date, value) => setRoutine({ ...routine, steps: { ...steps, [date]: value === "" ? undefined : Number(value) } });
+  const draftOf = (sectionId) => drafts[sectionId] || { name: "", type: ROUTINE_TYPES[0], freq: ROUTINE_FREQS[0] };
+  const setDraft = (sectionId, patch) => setDrafts({ ...drafts, [sectionId]: { ...draftOf(sectionId), ...patch } });
+  const setSectionItems = (sectionId, items) => setRoutine({ ...routine, items: { ...(routine.items || {}), [sectionId]: items } });
+  const addItem = (section) => {
+    const d = draftOf(section.id);
+    if (!d.name.trim()) return;
+    setSectionItems(section.id, [...section.items, { id: uid(), name: d.name.trim(), type: d.type, freq: d.freq }]);
+    setDrafts({ ...drafts, [section.id]: { ...d, name: "" } });
+  };
+  const removeItem = (section, itemId) => setSectionItems(section.id, section.items.filter((it) => it.id !== itemId));
 
-  const doneToday = ROUTINE_SECTIONS.flatMap((s) => s.items).filter((it) => isItemComplete(it, dayData)).length;
-  const dailyItems = useMemo(() => ROUTINE_SECTIONS.flatMap((s) => s.items).filter((it) => it.freq === "Diario"), []);
+  const doneToday = allItems.filter((it) => !!dayData[it.id]).length;
+  const dailyItems = useMemo(() => allItems.filter((it) => it.freq === "Diario"), [routine.items]);
   const streak = useMemo(() => {
     let count = 0;
     let d = new Date();
     for (let i = 0; i < 400; i++) {
       const ds = dateToStr(d);
       const data = checklist[ds] || {};
-      const allDone = dailyItems.length > 0 && dailyItems.every((it) => isItemComplete(it, data));
+      const allDone = dailyItems.length > 0 && dailyItems.every((it) => !!data[it.id]);
       if (allDone) { count++; d.setDate(d.getDate() - 1); } else break;
     }
     return count;
@@ -4705,7 +4646,7 @@ function RutinaDiaria({ routine, setRoutine }) {
       <div className="grid-2">
         <Card className="hero-card" style={{ background: "var(--acc-routine)" }}>
           <div className="hero-top"><span>Hoy</span><span className="hero-pill"><ListChecks size={13} /></span></div>
-          <div className="hero-value">{doneToday}<span className="hero-value-sub">/{ROUTINE_ITEM_COUNT}</span></div>
+          <div className="hero-value">{doneToday}<span className="hero-value-sub">/{allItems.length}</span></div>
           <div className="hero-foot">completado</div>
         </Card>
         <Card>
@@ -4757,9 +4698,10 @@ function RutinaDiaria({ routine, setRoutine }) {
         <DatePicker value={filterDate} onChange={setFilterDate} accent="var(--acc-routine)" label="Ir a una fecha" />
       </div>
 
-      {ROUTINE_SECTIONS.map((section) => {
+      {sections.map((section) => {
         const SectionIcon = section.icon;
-        const sectionDone = section.items.filter((it) => isItemComplete(it, dayData)).length;
+        const sectionDone = section.items.filter((it) => !!dayData[it.id]).length;
+        const draft = draftOf(section.id);
         return (
           <div key={section.id}>
             <div className="section-heading" style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -4768,56 +4710,40 @@ function RutinaDiaria({ routine, setRoutine }) {
               <span className="section-heading-count">{sectionDone}/{section.items.length}</span>
             </div>
             <div className="list-card">
+              {section.items.length === 0 && <p className="stat-label" style={{ margin: "12px 0" }}>Aún no hay nada aquí. Añade tu primer hábito abajo.</p>}
               {section.items.map((item) => {
                 const ItemIcon = ROUTINE_TYPE_ICON[item.type] || Pill;
-                const subDoneCount = item.details ? item.details.filter((d) => dayData[subKey(item.id, d.id)]).length : 0;
-                const checked = item.details ? subDoneCount === item.details.length : !!dayData[item.id];
-                const partial = item.details ? subDoneCount > 0 && !checked : false;
+                const checked = !!dayData[item.id];
                 return (
-                  <div key={item.id} className={"list-row" + (item.details ? " list-row-stack" : "")}>
-                    <div className="list-row-main">
+                  <div key={item.id} className="list-row">
+                    <div className="list-row-main" style={{ flex: 1, minWidth: 0 }}>
                       <button
-                        className={"check" + (checked ? " check-done" : "") + (partial ? " check-partial" : "")}
+                        className={"check" + (checked ? " check-done" : "")}
                         style={{ "--check-accent": section.accent }}
-                        onClick={() => (item.details ? toggleParent(item) : toggleItem(item.id))}
+                        onClick={() => toggleItem(item.id)}
                       >
                         {checked && <Check size={12} strokeWidth={3} />}
-                        {partial && <span className="check-dash" />}
                       </button>
                       <ItemIcon size={13} style={{ color: "var(--ink-soft)", flexShrink: 0 }} />
                       <span className={"list-text" + (checked ? " list-text-done" : "")}>{item.name}</span>
-                      {item.details && <span className="mono-tag">{subDoneCount}/{item.details.length}</span>}
                       {item.freq !== "Diario" && <span className="mono-tag">{item.freq}</span>}
                     </div>
-                    {item.details && (
-                      <ul className="routine-details">
-                        {item.details.map((d) => {
-                          const key = `${item.id}-${d.id}`;
-                          const isOpen = expandedDetail === key;
-                          const subOn = !!dayData[subKey(item.id, d.id)];
-                          return (
-                            <li key={d.id}>
-                              <div className="routine-sub-row">
-                                <button
-                                  className={"check check-sm" + (subOn ? " check-done" : "")}
-                                  style={{ "--check-accent": section.accent }}
-                                  onClick={() => toggleSub(item, d)}
-                                >
-                                  {subOn && <Check size={9} strokeWidth={3} />}
-                                </button>
-                                <button type="button" className="routine-detail-btn" onClick={() => setExpandedDetail(isOpen ? null : key)}>
-                                  {d.name}
-                                </button>
-                              </div>
-                              {isOpen && <p className="routine-detail-explain">{d.explanation}</p>}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
+                    <button className="icon-btn" title="Quitar" onClick={() => removeItem(section, item.id)}><Trash2 size={13} /></button>
                   </div>
                 );
               })}
+            </div>
+            <div className="form-row" style={{ marginTop: 10 }}>
+              <input className="input" placeholder={`Nuevo hábito de ${section.label.toLowerCase()}…`} value={draft.name}
+                onChange={(e) => setDraft(section.id, { name: e.target.value })}
+                onKeyDown={(e) => e.key === "Enter" && addItem(section)} />
+              <select className="select" value={draft.type} onChange={(e) => setDraft(section.id, { type: e.target.value })}>
+                {ROUTINE_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+              <select className="select" value={draft.freq} onChange={(e) => setDraft(section.id, { freq: e.target.value })}>
+                {ROUTINE_FREQS.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+              <button className="btn" style={{ "--btn-accent": section.accent }} onClick={() => addItem(section)}><Plus size={16} /></button>
             </div>
           </div>
         );

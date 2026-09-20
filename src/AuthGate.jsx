@@ -8,7 +8,7 @@
 //   import App from "./mi-agenda";
 //   <AuthGate><App /></AuthGate>
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement, isValidElement } from "react";
 import { supabase, signUp, signIn, signOut, onAuthChange } from "./storage-adapter";
 
 export default function AuthGate({ children }) {
@@ -32,6 +32,11 @@ export default function AuthGate({ children }) {
     setBusy(false);
     if (err) setError(err.message);
   };
+
+  // Nombre solo si el proveedor de login lo aporta (p. ej. Google); con email y contraseña queda en blanco.
+  const meta = (session && session.user && session.user.user_metadata) || {};
+  const fullName = meta.full_name || meta.name || "";
+  const userName = fullName.trim().split(/\s+/)[0] || "";
 
   if (session === undefined) {
     return <div style={{ padding: 40, textAlign: "center", fontFamily: "sans-serif" }}>Cargando…</div>;
@@ -70,7 +75,7 @@ export default function AuthGate({ children }) {
       <button onClick={signOut} style={{ position: "fixed", top: 10, right: 10, zIndex: 999, fontSize: 12, padding: "6px 10px", borderRadius: 8, border: "1px solid #ccc", background: "#fff", cursor: "pointer" }}>
         Cerrar sesión
       </button>
-      {children}
+      {isValidElement(children) ? cloneElement(children, { userName }) : children}
     </>
   );
 }
